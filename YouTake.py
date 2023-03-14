@@ -9,3 +9,4 @@ stream = yt.streams.get_highest_resolution()
 # Download the video to the current working directory
 stream.download()
 print("Video downloaded successfully !")
+input("Press the <ENTER> key to close...")
