@@ -9,7 +9,7 @@ The program is :
 - Virus free
 - Open source
 
-To launch the program, just double click on the executable file ***YouTake.exe***, it will automatically run the software.
+To launch the program, just double click on the executable file [YouTake.exe](YouTake.exe), it will automatically run the software.
 You can also launch the program with [Python](https://www.python.org/) installed on your computer, make sure that your version is up to date.
 
 The program will ask you to enter the link to the video (url) you want to download, just copy your link in the prompt window and type the key ```Enter``` on your keyboard to validate your choice.
