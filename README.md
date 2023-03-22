@@ -1,6 +1,6 @@
 # YouTake
 
-YouTake is a simple Youtube video downloader based on [Python](https://www.python.org/). It contains an executable Windows for convinience.
+YouTake is a simple Youtube video downloader based on [Python](https://www.python.org/). It contains an executable Windows for convenience.
 
 The program is :
 - Fast
