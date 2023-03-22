@@ -1,13 +1,11 @@
 from pytube import YouTube
 from pytube.cli import on_progress
 import tkinter as tk
+from tkinter import ttk
 from moviepy.editor import *
+import threading
 
-def print_selection():
-    print(vid_qual.get())
-    print(vid_form.get())
-    print(aud_qual.get())
-    print(entry.get())
+def download_with_thread():
     # Retrieve the value entered by the user in the entry widget
     url = entry.get()
     yt = YouTube(url, on_progress_callback=on_progress)
@@ -21,6 +19,25 @@ def print_selection():
         output_file = str(yt.title+"."+vid_form.get())
         print(output_file)
         clip.write_videofile(output_file)
+        
+def download_video():
+    t = threading.Thread(target=download_with_thread)
+    t.start()
+    
+def update_progress_bar(stream, chunk, file_handle, bytes_remaining):
+    size = stream.filesize
+    progress = round((float(abs(bytes_remaining-size)/size))*100)
+    progress_bar["value"] = progress
+    root.update_idletasks()
+    
+def print_selection():
+    # create progress bar
+    global progress_bar
+    progress_bar = ttk.Progressbar(root, orient="horizontal", length=300, mode="determinate")
+    progress_bar.pack(padx=10, pady=10)
+    
+    # start download in a new thread
+    download_video()
 
 video_quality = ["2160p", "1440p", "1080p", "720p", "480p", "360p", "240p", "144p"]
 video_format =  ["mkv", "mp4", "wmv", "avi"]
