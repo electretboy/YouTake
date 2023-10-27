@@ -75,11 +75,20 @@ class Downloader(QWidget):
             stream = yt.streams.filter(progressive=True).order_by('resolution').desc().first()
             stream.download(output_path=directory, filename=stream.default_filename)
 
-            # Convert video if necessary
-            if format != 'mp4':
-                clip = VideoFileClip(os.path.join(directory, stream.default_filename))
-                output_file = os.path.join(directory, f'{yt.title}.{format}')
-                clip.write_videofile(output_file)
+            # Download audio stream
+            audio_stream = yt.streams.filter(only_audio=True).order_by('abr').desc().first()
+            audio_file_name = f'{stream.default_filename[:-4]}.{audio_stream.subtype}'
+            audio_stream.download(output_path=directory, filename=audio_file_name)
+
+            # Merge video and audio streams
+            video_file_path = os.path.join(directory, stream.default_filename)
+            audio_file_path = os.path.join(directory, audio_file_name)
+            output_file_path = os.path.join(directory, f'{yt.title}.{format}')
+            os.system(f'ffmpeg -i "{video_file_path}" -i "{audio_file_path}" -c:v copy -c:a copy "{output_file_path}"')
+
+            # Delete temporary files
+            os.remove(video_file_path)
+            os.remove(audio_file_path)
 
         elif format in ['mp3', 'wav', 'flac', 'ac3', 'wma']:
             stream = yt.streams.filter(only_audio=True).order_by('abr').desc().first()
@@ -91,9 +100,12 @@ class Downloader(QWidget):
                 output_file = os.path.join(directory, f'{yt.title}.{format}')
                 clip.audio.write_audiofile(output_file)
 
-        # Reset progress bar
-        self.progress_bar.setValue(0)
+        # Set progress bar to green
+        self.progress_bar.setValue(100)
         self.progress_bar.setStyleSheet('QProgressBar {background-color: #C0C0C0; border: 1px solid grey; border-radius: 5px; text-align: center;} QProgressBar::chunk {background-color: #00FF00; width: 10px;}')
+
+        # Clear URL input field
+        self.url_input.clear()
 
     def update_progress_bar(self, stream, chunk, bytes_remaining):
         # Calculate download progress
